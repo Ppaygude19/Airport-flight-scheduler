@@ -8,6 +8,7 @@ const API_URL = 'http://localhost:8080/api';
 
 export default function CustomerPortal() {
   const [flights, setFlights] = useState([]);
+  const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [source, setSource] = useState('');
   const [dest, setDest] = useState('');
   const [routeData, setRouteData] = useState(null);
@@ -16,6 +17,7 @@ export default function CustomerPortal() {
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [bookingForm, setBookingForm] = useState({ name: '', email: '', seatType: 'Economy' });
   const [bookingSuccess, setBookingSuccess] = useState('');
+  const [isBooking, setIsBooking] = useState(false);
 
   const fetchFlights = async () => {
     try {
@@ -25,6 +27,8 @@ export default function CustomerPortal() {
       setFlights(activeFlights);
     } catch (err) {
       console.error("Error fetching flights:", err);
+    } finally {
+      setIsLoadingFlights(false);
     }
   };
 
@@ -59,6 +63,7 @@ export default function CustomerPortal() {
 
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
+    setIsBooking(true);
     try {
       const payload = { ...bookingForm, flightId: selectedFlight };
       const res = await axios.post(`${API_URL}/bookings`, payload);
@@ -66,6 +71,8 @@ export default function CustomerPortal() {
       setTimeout(() => setShowModal(false), 3000);
     } catch (err) {
       setBookingSuccess('Error making booking.');
+    } finally {
+      setIsBooking(false);
     }
   };
 
@@ -113,7 +120,7 @@ export default function CustomerPortal() {
         </section>
 
         {/* Route Planner */}
-        <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', position: 'relative', zIndex: 2 }}>
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', position: 'relative', zIndex: 2 }}>
           <div className="premium-card">
             <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: 'var(--color-primary)' }}>Trip Planner</h2>
             <form onSubmit={handleRouteSearch} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
@@ -164,11 +171,18 @@ export default function CustomerPortal() {
             Flight Status Board
           </h2>
           <div className="premium-card" style={{ padding: 0, overflow: 'hidden' }}>
-            {flights.length === 0 ? (
+            {isLoadingFlights ? (
+              <div style={{ padding: '2.5rem' }}>
+                <div className="skeleton skeleton-text" style={{ width: '100%', height: '3rem', marginBottom: '1rem' }}></div>
+                <div className="skeleton skeleton-text" style={{ width: '100%', height: '3rem', marginBottom: '1rem' }}></div>
+                <div className="skeleton skeleton-text" style={{ width: '100%', height: '3rem' }}></div>
+              </div>
+            ) : flights.length === 0 ? (
               <p style={{ color: 'var(--color-text-muted)', textAlign: 'center', padding: '3rem' }}>No active flights scheduled at the moment.</p>
             ) : (
-              <table className="premium-table" style={{ width: '100%', margin: 0 }}>
-                <thead style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
+              <div className="table-responsive">
+                <table className="premium-table" style={{ width: '100%', margin: 0, minWidth: '700px' }}>
+                  <thead style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}>
                   <tr>
                     <th style={{ padding: '1.5rem' }}>Flight</th>
                     <th style={{ padding: '1.5rem' }}>Route</th>
@@ -208,7 +222,8 @@ export default function CustomerPortal() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+                </table>
+              </div>
             )}
           </div>
         </section>
@@ -242,7 +257,7 @@ export default function CustomerPortal() {
                 </div>
                 <div>
                   <label className="premium-label">Seat Class</label>
-                  <select className="premium-input" value={bookingForm.seatType} onChange={e => setBookingForm({...bookingForm, seatType: e.target.value})} style={{ color: '#000', backgroundColor: '#fff' }}>
+                  <select className="premium-input" value={bookingForm.seatType} onChange={e => setBookingForm({...bookingForm, seatType: e.target.value})} style={{ appearance: 'none', backgroundColor: '#000', color: 'var(--color-text-main)' }}>
                     <option value="Economy">Economy Class</option>
                     <option value="Business">Business Class</option>
                     <option value="First Class">First Class</option>
@@ -250,7 +265,9 @@ export default function CustomerPortal() {
                 </div>
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                   <button type="button" className="premium-btn-outline" onClick={() => setShowModal(false)} style={{ flex: 1 }}>Cancel</button>
-                  <button type="submit" className="premium-btn" style={{ flex: 1 }}>Confirm Booking</button>
+                  <button type="submit" className="premium-btn" style={{ flex: 1, opacity: isBooking ? 0.7 : 1, cursor: isBooking ? 'not-allowed' : 'pointer' }} disabled={isBooking}>
+                    {isBooking ? 'Booking...' : 'Confirm Booking'}
+                  </button>
                 </div>
               </form>
             )}

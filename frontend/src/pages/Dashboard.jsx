@@ -33,13 +33,13 @@ export default function Dashboard() {
         <h2>Dashboard</h2>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '3rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
         <div className="premium-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ padding: '1rem', backgroundColor: 'rgba(197, 168, 128, 0.1)', borderRadius: '50%', color: 'var(--color-gold)' }}>
             <Plane size={24} />
           </div>
           <div>
-            <p style={{ color: 'rgba(248, 245, 242, 0.6)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Total</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Total</p>
             <p style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: '600' }}>{total}</p>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default function Dashboard() {
             <CheckCircle2 size={24} />
           </div>
           <div>
-            <p style={{ color: 'rgba(248, 245, 242, 0.6)', fontSize: '0.85rem', textTransform: 'uppercase' }}>On Time</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase' }}>On Time</p>
             <p style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: '600' }}>{onTime}</p>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default function Dashboard() {
             <AlertCircle size={24} />
           </div>
           <div>
-            <p style={{ color: 'rgba(248, 245, 242, 0.6)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Delayed</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Delayed</p>
             <p style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: '600' }}>{delayed}</p>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function Dashboard() {
             <Plane size={24} style={{transform: 'rotate(90deg)'}} />
           </div>
           <div>
-            <p style={{ color: 'rgba(248, 245, 242, 0.6)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Completed</p>
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', textTransform: 'uppercase' }}>Completed</p>
             <p style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: '600' }}>{completed}</p>
           </div>
         </div>
@@ -78,10 +78,11 @@ export default function Dashboard() {
       <div className="premium-card">
         <h3 style={{ marginBottom: '1.5rem', color: 'var(--color-gold)' }}>Active Flights Schedule</h3>
         {flights.length === 0 ? (
-          <p style={{ color: 'rgba(248, 245, 242, 0.6)' }}>No flights scheduled yet.</p>
+          <p style={{ color: 'var(--color-text-muted)' }}>No flights scheduled yet.</p>
         ) : (
-          <table className="premium-table">
-            <thead>
+          <div className="table-responsive">
+            <table className="premium-table" style={{ minWidth: '700px' }}>
+              <thead>
               <tr>
                 <th>Flight ID</th>
                 <th>Route</th>
@@ -108,6 +109,7 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>
